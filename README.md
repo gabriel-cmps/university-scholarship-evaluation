@@ -9,6 +9,11 @@ Este sistema implementado em C permite avaliar a elegibilidade de candidatos par
 - Validação dos critérios de elegibilidade para bolsas integrais e parciais.
 - Exibição do resultado da candidatura com motivo de aprovação ou reprovação.
 
+## Fluxograma
+- O fluxo de execução do sistema pode ser visualizado no fluxograma abaixo:
+
+![Fluxograma](docs/flowchart-university-scholarship-work.png)
+
 ## Critérios para Bolsa
 ### Bolsa Integral
 - Renda per capita máxima de R$800,00.
