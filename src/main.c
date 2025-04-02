@@ -4,13 +4,13 @@
 
 typedef enum
 {
-  ERROR_INVALID_INPUT = 1,             // Invalid input (non-numeric)
-  ERROR_ZERO_OR_NEGATIVE = 2,          // Value is less than or equal to 0
-  ERROR_OUT_OF_RANGE = 3,              // Value is out of the allowed range (e.g., 0 to 10)
-  ERROR_BINARY_EXPECTED = 4,           // Value must be 0 or 1
-  ERROR_SCHOLARSHIP_TYPE_EXPECTED = 5, // Value must be 1 (FULL) or 2 (PARTIAL)
-  ERROR_COURSE_NAME_INPUT = 6,         // Error reading the course name
-  ERROR_NEGATIVE_VALUE = 7,            // Negative value entered (invalid)
+  ERROR_INVALID_INPUT = 0,             // Invalid input (non-numeric)
+  ERROR_ZERO_OR_NEGATIVE = 1,          // Value is less than or equal to 0
+  ERROR_OUT_OF_RANGE = 2,              // Value is out of the allowed range (e.g., 0 to 10)
+  ERROR_BINARY_EXPECTED = 3,           // Value must be 0 or 1
+  ERROR_SCHOLARSHIP_TYPE_EXPECTED = 4, // Value must be 1 (FULL) or 2 (PARTIAL)
+  ERROR_COURSE_NAME_INPUT = 5,         // Error reading the course name
+  ERROR_NEGATIVE_VALUE = 6,            // Negative value entered (invalid)
 } ErrorCode;
 
 #define MAX_COURSE_NAME 100                                   // Maximum length for the course name
@@ -138,9 +138,9 @@ void get_desired_course(Candidate *candidate)
   clear_input_buffer();
 }
 
-int get_desired_scholarship_type(Candidate *candidate)
+void get_desired_scholarship_type(Candidate *candidate)
 {
-  while (1)
+  while (true)
   {
     printf("Tipo de bolsa desejada (1 para INTEGRAL, 2 para PARCIAL): ");
 
@@ -162,9 +162,9 @@ int get_desired_scholarship_type(Candidate *candidate)
   };
 }
 
-int get_enem_score(Candidate *candidate)
+void get_enem_score(Candidate *candidate)
 {
-  while (1)
+  while (true)
   {
     printf("Digite a Nota do ENEM (0 a 10): ");
 
@@ -186,9 +186,9 @@ int get_enem_score(Candidate *candidate)
   }
 }
 
-int get_family_size(Candidate *candidate)
+void get_family_size(Candidate *candidate)
 {
-  while (1)
+  while (true)
   {
     printf("Digite o número de pessoas na família: ");
 
@@ -210,9 +210,9 @@ int get_family_size(Candidate *candidate)
   };
 }
 
-int get_family_scholarship_recipients(Candidate *candidate)
+void get_family_scholarship_recipients(Candidate *candidate)
 {
-  while (1)
+  while (true)
   {
     printf("Digite o número de familiares bolsistas na universidade: ");
 
@@ -234,9 +234,9 @@ int get_family_scholarship_recipients(Candidate *candidate)
   }
 }
 
-int get_has_disability(Candidate *candidate)
+void get_has_disability(Candidate *candidate)
 {
-  while (1)
+  while (true)
   {
     printf("Possui deficiência? (1-Sim, 0-Não): ");
 
@@ -258,9 +258,9 @@ int get_has_disability(Candidate *candidate)
   };
 }
 
-int get_high_school_average(Candidate *candidate)
+void get_high_school_average(Candidate *candidate)
 {
-  while (1)
+  while (true)
   {
     printf("Digite a Média Geral do Ensino Médio (0 a 10): ");
 
@@ -282,10 +282,10 @@ int get_high_school_average(Candidate *candidate)
   };
 }
 
-int get_internal_selection_score(Candidate *candidate)
+void get_internal_selection_score(Candidate *candidate)
 {
 
-  while (1)
+  while (true)
   {
     printf("Digite a Nota do Processo Seletivo Interno (0 a 10): ");
 
@@ -307,9 +307,9 @@ int get_internal_selection_score(Candidate *candidate)
   }
 }
 
-int get_is_public_school_student(Candidate *candidate)
+void get_is_public_school_student(Candidate *candidate)
 {
-  while (1)
+  while (true)
   {
     printf("É aluno da rede pública? (1-Sim, 0-Não): ");
 
@@ -331,9 +331,9 @@ int get_is_public_school_student(Candidate *candidate)
   }
 }
 
-int get_monthly_household_income(Candidate *candidate)
+void get_monthly_household_income(Candidate *candidate)
 {
-  while (1)
+  while (true)
   {
     printf("Digite a renda mensal da família (R$): ");
 
@@ -380,6 +380,7 @@ int main()
 
   initialize_candidate(&candidate);
 
+  printf("Avaliação de Bolsa Universitária\n");
   get_monthly_household_income(&candidate);
   get_internal_selection_score(&candidate);
   get_enem_score(&candidate);
