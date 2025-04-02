@@ -92,14 +92,12 @@ void update_candidate_scores(Candidate *candidate)
 void clear_input_buffer()
 {
   int ch;
-  bool eof_detected = false;
 
   while ((ch = getchar()) != '\n' && ch != EOF)
     ;
 
   if (ch == EOF)
   {
-    eof_detected = true;
 
     clearerr(stdin);
 
@@ -345,7 +343,7 @@ void get_is_public_school_student(Candidate *candidate)
     {
       display_error_message(ERROR_INVALID_INPUT);
       clear_input_buffer();
-      candidate->is_public_school_student = 0.0f;
+      candidate->is_public_school_student = false;
       continue;
     }
 
@@ -489,12 +487,11 @@ int main()
     if (candidate.final_score < min_score)
     {
       char score_message[256];
-      sprintf(score_message,
-              (min_score == MIN_SCORE_PARTIAL_NO_PUBLIC_SCHOOL_NO_DISABILITY)
-                  ? "- Nota final inferior a %.1f, exigido para a Bolsa Parcial. Candidato não é da rede pública e não possui deficiência. \n"
-                  : "- Nota final inferior a %.1f. \n",
-              min_score);
-
+      if (min_score == MIN_SCORE_PARTIAL_NO_PUBLIC_SCHOOL_NO_DISABILITY) {
+        sprintf(score_message, "- Nota final inferior a %.1f, exigido para a Bolsa Parcial. Candidato não é da rede pública e não possui deficiência. \n", min_score);
+      } else {
+        sprintf(score_message, "- Nota final inferior a %.1f. \n", min_score);
+      }
       strcat(all_rejection_reasons, score_message);
       reason_count++;
     }
