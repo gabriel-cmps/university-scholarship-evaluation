@@ -31,11 +31,11 @@ Este sistema implementado em C permite avaliar a elegibilidade de candidatos par
 ## Como Executar
 1. Compile o código usando um compilador C, como o GCC:
    ```sh
-   gcc -o scholarship_eval src/main.c
+   gcc -o bin/scholarship_eval src/main.c
    ```
 2. Execute o programa:
    ```sh
-   ./scholarship_eval
+   ./bin/scholarship_eval
    ```
 
 ## Autor
