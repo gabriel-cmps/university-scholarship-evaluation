@@ -1,6 +1,5 @@
 # Sistema de Bolsa de Estudos
 
-## Descrição
 Este sistema implementado em C permite avaliar a elegibilidade de candidatos para bolsas universitárias (integral ou parcial) com base em critérios socioeconômicos e acadêmicos.
 
 ## Funcionalidades
