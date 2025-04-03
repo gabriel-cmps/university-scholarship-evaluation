@@ -13,6 +13,8 @@ Este sistema implementado em C permite avaliar a elegibilidade de candidatos par
 
 ![Fluxograma](docs/flowchart-university-scholarship-work.png)
 
+O fluxograma foi criado usando Excalidraw. O arquivo fonte original (.excalidraw) está disponível em `docs/flowchart-university-scholarship-work.excalidraw` e pode ser editado usando a ferramenta online [Excalidraw](https://excalidraw.com/).
+
 ## Critérios para Bolsa
 ### Bolsa Integral
 - Renda per capita máxima de R$800,00.
