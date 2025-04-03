@@ -92,15 +92,11 @@ void update_candidate_scores(Candidate *candidate)
 void clear_input_buffer()
 {
   int ch;
-
   while ((ch = getchar()) != '\n' && ch != EOF)
     ;
-
   if (ch == EOF)
   {
-
     clearerr(stdin);
-
     printf("Detectado sinal de fim de arquivo (Ctrl+D). Por favor, digite novamente.\n");
   }
 }
@@ -138,7 +134,86 @@ void display_error_message(ErrorCode error_code)
   default:
     printf("Motivo: Erro desconhecido na entrada.\n");
   }
+
   printf("\n");
+}
+
+unsigned short read_ushort_with_min(const char *prompt, unsigned short min, ErrorCode error_code)
+{
+  char extra;
+  short input;
+
+  while (true)
+  {
+    printf("%s", prompt);
+
+    if (scanf("%hu%c", &input, &extra) != 2 || extra != '\n')
+    {
+      clear_input_buffer();
+      display_error_message(ERROR_INVALID_INPUT);
+      continue;
+    }
+
+    if (input < min)
+    {
+      display_error_message(error_code);
+      continue;
+    }
+
+    return input;
+  }
+}
+
+bool read_boolean(const char *prompt)
+{
+  char extra;
+  int input;
+
+  while (true)
+  {
+    printf("%s", prompt);
+
+    if (scanf("%d%c", &input, &extra) != 2 || extra != '\n')
+    {
+      clear_input_buffer();
+      display_error_message(ERROR_INVALID_INPUT);
+      continue;
+    }
+
+    if (input != 0 && input != 1)
+    {
+      display_error_message(ERROR_BINARY_EXPECTED);
+      continue;
+    }
+
+    return (bool)input;
+  }
+}
+
+float read_float_in_range(const char *prompt, float min, float max, ErrorCode error_code)
+{
+  char extra;
+  float input;
+
+  while (true)
+  {
+    printf("%s", prompt);
+
+    if (scanf("%f%c", &input, &extra) != 2 || extra != '\n')
+    {
+      clear_input_buffer();
+      display_error_message(ERROR_INVALID_INPUT);
+      continue;
+    }
+
+    if (input < min || input > max)
+    {
+      display_error_message(error_code);
+      continue;
+    }
+
+    return input;
+  }
 }
 
 void get_desired_course(Candidate *candidate)
@@ -159,23 +234,25 @@ void get_desired_course(Candidate *candidate)
 void get_desired_scholarship_type(Candidate *candidate)
 {
   char extra;
+  int input;
   while (true)
   {
     printf("Tipo de bolsa desejada (1 para INTEGRAL, 2 para PARCIAL): ");
 
-    if (scanf("%d%c", (int *)&candidate->desired_scholarship_type, &extra) != 2 || extra != '\n')
+    if (scanf("%d%c", &input, &extra) != 2 || extra != '\n')
     {
       clear_input_buffer();
       display_error_message(ERROR_INVALID_INPUT);
-      candidate->desired_scholarship_type = 0;
       continue;
     }
 
-    if (candidate->desired_scholarship_type != 1 && candidate->desired_scholarship_type != 2)
+    if (input != 1 && input != 2)
     {
       display_error_message(ERROR_SCHOLARSHIP_TYPE_EXPECTED);
       continue;
     }
+
+    candidate->desired_scholarship_type = (ScholarshipType)input;
 
     break;
   };
@@ -183,201 +260,76 @@ void get_desired_scholarship_type(Candidate *candidate)
 
 void get_enem_score(Candidate *candidate)
 {
-  char extra;
-  while (true)
-  {
-    printf("Digite a Nota do ENEM (0 a 10): ");
-
-    if (scanf("%f%c", &candidate->enem_score, &extra) != 2 || extra != '\n')
-    {
-      clear_input_buffer();
-      display_error_message(ERROR_INVALID_INPUT);
-      candidate->enem_score = 0.0f;
-      continue;
-    }
-
-    if (candidate->enem_score < 0 || candidate->enem_score > 10)
-    {
-      display_error_message(ERROR_OUT_OF_RANGE);
-      continue;
-    }
-
-    break;
-  }
+  candidate->enem_score = read_float_in_range(
+      "Digite a Nota do ENEM (0 a 10): ",
+      0.0f, 10.0f,
+      ERROR_OUT_OF_RANGE);
 }
 
 void get_family_size(Candidate *candidate)
 {
-  char extra;
-  while (true)
-  {
-    printf("Digite o número de pessoas na família: ");
-
-    if (scanf("%hu%c", &candidate->family_size, &extra) != 2 || extra != '\n')
-    {
-      clear_input_buffer();
-      display_error_message(ERROR_INVALID_INPUT);
-      candidate->family_size = 0;
-      continue;
-    }
-
-    if (candidate->family_size <= 0)
-    {
-      display_error_message(ERROR_ZERO_OR_NEGATIVE);
-      continue;
-    }
-
-    break;
-  };
+  candidate->family_size = read_ushort_with_min(
+      "Digite o número de pessoas na família: ",
+      1,
+      ERROR_ZERO_OR_NEGATIVE);
 }
 
 void get_family_scholarship_recipients(Candidate *candidate)
 {
-  char extra;
-  while (true)
-  {
-    printf("Digite o número de familiares bolsistas na universidade: ");
-
-    if (scanf("%hu%c", &candidate->family_scholarship_recipients, &extra) != 2 || extra != '\n')
-    {
-      clear_input_buffer();
-      display_error_message(ERROR_INVALID_INPUT);
-      candidate->family_scholarship_recipients = 0;
-      continue;
-    }
-
-    if (candidate->family_scholarship_recipients < 0)
-    {
-      display_error_message(ERROR_NEGATIVE_VALUE);
-      continue;
-    }
-
-    break;
-  }
+  candidate->family_scholarship_recipients = read_ushort_with_min(
+      "Digite o número de familiares bolsistas na universidade: ",
+      0,
+      ERROR_NEGATIVE_VALUE);
 }
 
 void get_has_disability(Candidate *candidate)
 {
-  char extra;
-  while (true)
-  {
-    printf("Possui deficiência? (1-Sim, 0-Não): ");
-
-    if (scanf("%d%c", (int *)&candidate->has_disability, &extra) != 2 || extra != '\n')
-    {
-      clear_input_buffer();
-      display_error_message(ERROR_INVALID_INPUT);
-      candidate->has_disability = false;
-      continue;
-    }
-
-    if (candidate->has_disability != 0 && candidate->has_disability != 1)
-    {
-      display_error_message(ERROR_BINARY_EXPECTED);
-      continue;
-    }
-
-    break;
-  };
+  candidate->has_disability = read_boolean("Possui deficiência? (1-Sim, 0-Não): ");
 }
 
 void get_high_school_average(Candidate *candidate)
 {
-  char extra;
-  while (true)
-  {
-    printf("Digite a Média Geral do Ensino Médio (0 a 10): ");
-
-    if (scanf("%f%c", &candidate->high_school_average, &extra) != 2 || extra != '\n')
-    {
-      clear_input_buffer();
-      display_error_message(ERROR_INVALID_INPUT);
-      candidate->high_school_average = 0.0f;
-      continue;
-    }
-
-    if (candidate->high_school_average < 0 || candidate->high_school_average > 10)
-    {
-      display_error_message(ERROR_OUT_OF_RANGE);
-      continue;
-    }
-
-    break;
-  };
+  candidate->high_school_average = read_float_in_range(
+      "Digite a Média Geral do Ensino Médio (0 a 10): ",
+      0.0f, 10.0f,
+      ERROR_OUT_OF_RANGE);
 }
 
 void get_internal_selection_score(Candidate *candidate)
 {
-  char extra;
-  while (true)
-  {
-    printf("Digite a Nota do Processo Seletivo Interno (0 a 10): ");
-
-    if (scanf("%f%c", &candidate->internal_selection_score, &extra) != 2 || extra != '\n')
-    {
-      clear_input_buffer();
-      display_error_message(ERROR_INVALID_INPUT);
-      candidate->internal_selection_score = 0.0f;
-      continue;
-    }
-
-    if (candidate->internal_selection_score < 0 || candidate->internal_selection_score > 10)
-    {
-      display_error_message(ERROR_OUT_OF_RANGE);
-      continue;
-    }
-
-    break;
-  }
+  candidate->internal_selection_score = read_float_in_range(
+      "Digite a Nota do Processo Seletivo Interno (0 a 10): ",
+      0.0f, 10.0f,
+      ERROR_OUT_OF_RANGE);
 }
 
 void get_is_public_school_student(Candidate *candidate)
 {
-  char extra;
-
-  while (true)
-  {
-    printf("É aluno da rede pública? (1-Sim, 0-Não): ");
-
-    if (scanf("%d%c", (int *)&candidate->is_public_school_student, &extra) != 2 || extra != '\n')
-    {
-      display_error_message(ERROR_INVALID_INPUT);
-      clear_input_buffer();
-      candidate->is_public_school_student = false;
-      continue;
-    }
-
-    if (candidate->is_public_school_student != 0 && candidate->is_public_school_student != 1)
-    {
-      display_error_message(ERROR_BINARY_EXPECTED);
-      continue;
-    }
-
-    break;
-  }
+  candidate->is_public_school_student = read_boolean("É aluno da rede pública? (1-Sim, 0-Não): ");
 }
 
 void get_monthly_household_income(Candidate *candidate)
 {
   char extra;
-
+  float input;
   while (true)
   {
     printf("Digite a renda mensal da família (R$): ");
 
-    if (scanf("%f%c", &candidate->monthly_household_income, &extra) != 2 || extra != '\n')
+    if (scanf("%f%c", &input, &extra) != 2 || extra != '\n')
     {
       clear_input_buffer();
       display_error_message(ERROR_INVALID_INPUT);
-      candidate->monthly_household_income = 0.0f;
       continue;
     }
 
-    if (candidate->monthly_household_income <= 0)
+    if (input <= 0)
     {
       display_error_message(ERROR_ZERO_OR_NEGATIVE);
       continue;
     }
+
+    candidate->monthly_household_income = input;
 
     break;
   }
@@ -389,6 +341,7 @@ void print_application_result(const Candidate *candidate, const char *rejection_
   printf("Curso pretendido: %s\n", candidate->desired_course[0] ? candidate->desired_course : "Não informado");
   printf("Nota Final: %.2f\n", candidate->final_score);
   printf("Renda per capita: R$ %.2f\n", candidate->per_capita_income);
+
   if (rejection_reason)
   {
     printf("Resultado: Candidatura INDEFERIDA!\n");
@@ -399,6 +352,7 @@ void print_application_result(const Candidate *candidate, const char *rejection_
     printf("Resultado: Bolsa %s CONCEDIDA!\n",
            candidate->desired_scholarship_type == SCHOLARSHIP_FULL ? "Integral" : "Parcial");
   }
+
   printf("=========================================================\n");
 }
 
@@ -452,6 +406,7 @@ int main()
     if (candidate.family_scholarship_recipients > MAX_FAMILY_RECIPIENTS_FULL_SCHOLARSHIP)
     {
       char temp[256];
+
       if (MAX_FAMILY_RECIPIENTS_FULL_SCHOLARSHIP == 0)
       {
         sprintf(temp, "- Já possui familiar bolsista. \n");
@@ -462,6 +417,7 @@ int main()
                 MAX_FAMILY_RECIPIENTS_FULL_SCHOLARSHIP,
                 (MAX_FAMILY_RECIPIENTS_FULL_SCHOLARSHIP != 1) ? "es" : "");
       }
+
       strcat(all_rejection_reasons, temp);
       reason_count++;
     }
@@ -487,11 +443,16 @@ int main()
     if (candidate.final_score < min_score)
     {
       char score_message[256];
-      if (min_score == MIN_SCORE_PARTIAL_NO_PUBLIC_SCHOOL_NO_DISABILITY) {
+
+      if (min_score == MIN_SCORE_PARTIAL_NO_PUBLIC_SCHOOL_NO_DISABILITY)
+      {
         sprintf(score_message, "- Nota final inferior a %.1f, exigido para a Bolsa Parcial. Candidato não é da rede pública e não possui deficiência. \n", min_score);
-      } else {
+      }
+      else
+      {
         sprintf(score_message, "- Nota final inferior a %.1f. \n", min_score);
       }
+
       strcat(all_rejection_reasons, score_message);
       reason_count++;
     }
