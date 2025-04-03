@@ -10,6 +10,7 @@
 #define MAX_INCOME_PARTIAL_SCHOLARSHIP 1600.0f                // Maximum per capita income for partial scholarship
 #define MAX_FAMILY_RECIPIENTS_FULL_SCHOLARSHIP 0              // Maximum number of family members with scholarships allowed for full scholarship
 #define MAX_FAMILY_RECIPIENTS_PARTIAL_SCHOLARSHIP 1           // Maximum number of family members with scholarships allowed for partial scholarship
+#define USHRT_MAX 65535                                       // Maximum value for an unsigned short integer.
 
 typedef enum
 {
@@ -21,6 +22,7 @@ typedef enum
   ERROR_SCHOLARSHIP_TYPE_EXPECTED = 5, // Value must be 1 (FULL) or 2 (PARTIAL)
   ERROR_COURSE_NAME_INPUT = 6,         // Error reading the course name
   ERROR_NEGATIVE_VALUE = 7,            // Negative value entered (invalid)
+  ERROR_USHRT_MAX = 8,                 // Value exceeds maximum for unsigned short (65535)
 } ErrorCode;
 
 typedef enum
@@ -131,6 +133,9 @@ void display_error_message(ErrorCode error_code)
   case ERROR_NEGATIVE_VALUE:
     printf("Motivo: O valor informado não pode ser negativo.\n");
     break;
+  case ERROR_USHRT_MAX:
+    printf("Motivo: O valor é muito grande. O máximo permitido é 65535.\n");
+    break;
   default:
     printf("Motivo: Erro desconhecido na entrada.\n");
   }
@@ -141,16 +146,21 @@ void display_error_message(ErrorCode error_code)
 unsigned short read_ushort_with_min(const char *prompt, unsigned short min, ErrorCode error_code)
 {
   char extra;
-  short input;
-
+  long long input;
   while (true)
   {
     printf("%s", prompt);
 
-    if (scanf("%hu%c", &input, &extra) != 2 || extra != '\n')
+    if (scanf("%lld%c", &input, &extra) != 2 || extra != '\n')
     {
       clear_input_buffer();
       display_error_message(ERROR_INVALID_INPUT);
+      continue;
+    }
+
+    if (input > 65535)
+    {
+      display_error_message(ERROR_USHRT_MAX);
       continue;
     }
 
@@ -160,7 +170,7 @@ unsigned short read_ushort_with_min(const char *prompt, unsigned short min, Erro
       continue;
     }
 
-    return input;
+    return (unsigned short)input;
   }
 }
 
