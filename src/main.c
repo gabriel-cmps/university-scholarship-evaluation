@@ -116,7 +116,7 @@ void display_error_message(ErrorCode error_code)
     printf("Motivo: Valor informado não é um número válido.\n");
     break;
   case ERROR_ZERO_OR_NEGATIVE:
-    printf("Motivo: Valor informado é menor ou igual a 0.\n");
+    printf("Motivo: O valor informado deve ser maior que 0.\n");
     break;
   case ERROR_OUT_OF_RANGE:
     printf("Motivo: O valor informado deve estar no intervalo de 0 a 10.\n");
